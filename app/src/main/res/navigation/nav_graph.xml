@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/viewPager">
+
+    <fragment
+        android:id="@+id/latestMovies"
+        android:name="com.example.moviesapplication.latestMovies.LatestMoviesFragment"
+        android:label="fragment_latest_movies"
+        tools:layout="@layout/fragment_latest_movies" />
+    <fragment
+        android:id="@+id/favorites"
+        android:name="com.example.moviesapplication.favorites.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites" />
+    <fragment
+        android:id="@+id/movieDetails"
+        android:name="com.example.moviesapplication.movieDetails.MovieDetailsFragment"
+        android:label="fragment_movie_details"
+        tools:layout="@layout/fragment_movie_details" >
+        <argument
+            android:name="args"
+            app:argType="com.example.moviesapplication.Results" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/viewPager"
+        android:name="com.example.moviesapplication.viewPagerFragment.ViewPager"
+        android:label="fragment_view_pager"
+        tools:layout="@layout/fragment_view_pager" >
+        <action
+            android:id="@+id/action_viewPager_to_movieDetails"
+            app:destination="@id/movieDetails"
+            app:popUpTo="@id/viewPager" />
+    </fragment>
+</navigation>
