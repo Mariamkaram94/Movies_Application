@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -38,38 +39,19 @@ class LatestMoviesFragment : Fragment(),LatestMoviesRecyclerAdapter.OnRecyclerCl
         binding.recyclerId.layoutManager = GridLayoutManager(context, 3)
         mViewModel.getAllMovies(requireActivity())
         mViewModel.movieList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            binding.recyclerId.adapter = LatestMoviesRecyclerAdapter(it, requireActivity(), this)
+            binding.recyclerId.adapter = LatestMoviesRecyclerAdapter(it, requireActivity(), this,
+                LatestMoviesViewModel(requireActivity()!!.application))
         })
     }
 
     override fun onFavClick(result: Results, position: Int) {
         CoroutineScope(Dispatchers.IO).async {
-            val db = Room.databaseBuilder(requireContext(), MovieDataBase::class.java, "moviesDb").build()
+            val exists = mViewModel.check(result.title)
             CoroutineScope(Dispatchers.Main).async {
-
-                val adult = result.adult
-                val backdropPath = result.backdrop_path
-                val movieId = result.id
-                val originalLanguage = result.original_language
-                val movieOriginalTitle = result.original_title
-                val overview = result.overview
-                val popularity = result.popularity
-                val moviePoster = result.poster_path
-                val releaseDate = result.release_date
-                val movieTitle = result.title
-                val movieVideo= result.video
-                val voteAverage = result.vote_average
-                val voteCount = result.vote_count
-
-                val movie = Results(0,adult,backdropPath,movieId,originalLanguage,
-                    movieOriginalTitle,overview,popularity, moviePoster,releaseDate,movieTitle,movieVideo,voteAverage,voteCount)
-
-
-                if(db.movieDao().isExist(result.id)){
-                    db.movieDao().deleteMovie(result.id)
-                }else{
-                    db.movieDao().addMovie(movie)
-                  //  Toast.makeText(context, "Added To Favorites", Toast.LENGTH_SHORT).show()
+                if (exists) {
+                    mViewModel.delete(requireActivity(), result.id)
+                } else {
+                    mViewModel.insert(requireActivity(), result)
                 }
             }
         }

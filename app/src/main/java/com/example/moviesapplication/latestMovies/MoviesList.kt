@@ -64,4 +64,5 @@ data class Results(
 
     @ColumnInfo(name = "voteCount")
     val vote_count: Int
+
 ) : Serializable

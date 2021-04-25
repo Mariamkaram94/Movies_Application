@@ -44,7 +44,7 @@ class FavoriteMoviesRecyclerAdapter(private val dataSet: List<Results>,
             recyclerbinding.favId.isChecked = true
             recyclerbinding.favId.setOnClickListener {
                 CoroutineScope(Dispatchers.IO).async {
-                    val db = Room.databaseBuilder(context, MovieDataBase::class.java, "moviesDb").build()
+                    val db = Room.databaseBuilder(context, MovieDataBase::class.java, "movies_database").build()
                     CoroutineScope(Dispatchers.Main).async {
                          db.movieDao().deleteMovie(result.id)
                     }

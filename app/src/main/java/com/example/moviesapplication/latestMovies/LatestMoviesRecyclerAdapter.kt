@@ -10,20 +10,22 @@ import androidx.room.Room
 import com.example.moviesapplication.Results
 import com.example.moviesapplication.databinding.RecyclerItemBinding
 import com.example.moviesapplication.db.MovieDataBase
+import com.example.moviesapplication.db.MoviesRepository
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class LatestMoviesRecyclerAdapter (private val dataSet: List<Results>, private val context: Context,
-                                   private val listner : OnRecyclerClikListener) :
+                                   private val listner : OnRecyclerClikListener,
+private val moviesViewModel: LatestMoviesViewModel) :
     RecyclerView.Adapter<LatestMoviesRecyclerAdapter.ViewHolder>() {
-
 
     override fun getItemCount() = dataSet.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):ViewHolder{
           val view = RecyclerItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+
            return ViewHolder (view)
     }
 
@@ -34,20 +36,19 @@ class LatestMoviesRecyclerAdapter (private val dataSet: List<Results>, private v
    inner class ViewHolder(var recyclerbinding: RecyclerItemBinding) : RecyclerView.ViewHolder(recyclerbinding.root) {
 
         fun bind (context: Context, result: Results, listener:OnRecyclerClikListener) {
-
             CoroutineScope(Dispatchers.IO).async {
-                val db = Room.databaseBuilder(context, MovieDataBase::class.java, "moviesDb").build()
+            val exist = moviesViewModel.check(result.title)
                 CoroutineScope(Dispatchers.Main).async {
-                    val existance = db.movieDao().isExist(result.id)
-                    recyclerbinding.favId.isChecked = existance
+                    recyclerbinding.favId.isChecked = exist
                 }
             }
-            val  imageBase:String = "https://image.tmdb.org/t/p/w500/"
+
+            val  imageBase = "https://image.tmdb.org/t/p/w500/"
             recyclerbinding.titleId.text= result.title
             Picasso.get().load(imageBase + result.poster_path).into(recyclerbinding.imgId)
 
            recyclerbinding.favId.setOnClickListener {
-               listener.onFavClick(result, adapterPosition )
+               listener.onFavClick(result, adapterPosition)
            }
 
             recyclerbinding.cardId.setOnClickListener {
@@ -57,7 +58,7 @@ class LatestMoviesRecyclerAdapter (private val dataSet: List<Results>, private v
    }
 
     interface OnRecyclerClikListener{
-        fun onFavClick( result: Results, position: Int)
+        fun onFavClick(result: Results, position: Int)
         fun onCardClick (view: View, recyclerBinding: RecyclerItemBinding, result: Results)
     }
 }

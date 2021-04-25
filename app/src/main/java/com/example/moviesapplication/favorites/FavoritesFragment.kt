@@ -31,7 +31,7 @@ class FavoritesFragment : Fragment(), FavoriteMoviesRecyclerAdapter.OnRecyclerCl
         super.onViewCreated(view, savedInstanceState)
         binding.favRecyclerId.layoutManager = GridLayoutManager(context, 3)
         onRefresh()
-        mViewModel.getAllFav(requireActivity())
+
         mViewModel.favList.observe(viewLifecycleOwner, Observer {
             binding.favRecyclerId.adapter = FavoriteMoviesRecyclerAdapter(it, requireActivity(),this)
 
@@ -47,7 +47,7 @@ class FavoritesFragment : Fragment(), FavoriteMoviesRecyclerAdapter.OnRecyclerCl
 
     fun onRefresh(){
         binding.swiperefreshId.setOnRefreshListener {
-            mViewModel.getAllFav(requireActivity())
+            mViewModel.favList
             binding.swiperefreshId.isRefreshing = false
         }
     }
